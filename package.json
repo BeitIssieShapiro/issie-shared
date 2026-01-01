@@ -7,6 +7,13 @@
     "files": [
         "dist"
     ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/BeitIssieShapiro/issie-shared.git"
+    },
+    "bugs": {
+        "url": "https://github.com/BeitIssieShapiro/issie-shared/issues"
+    },
     "publishConfig": {
         "registry": "https://npm.pkg.github.com"
     },
