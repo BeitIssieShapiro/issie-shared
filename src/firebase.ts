@@ -2,7 +2,6 @@ import { ReactNativeFirebaseAppCheckProvider, initializeAppCheck } from '@react-
 import { getApp } from '@react-native-firebase/app';
 import { getFunctions, httpsCallable } from '@react-native-firebase/functions';
 import { logEvent, logAppOpen, getAnalytics } from '@react-native-firebase/analytics';
-import { Platform, NativeModules } from 'react-native';
 
 let appCheck: any = undefined;
 let analytics: any = undefined
