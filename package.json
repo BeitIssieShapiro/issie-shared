@@ -1,5 +1,5 @@
 {
-    "name": "@beitissie/issie-shared",
+    "name": "@beitissieshapiro/issie-shared",
     "version": "1.0.0",
     "description": "Shared logic and types for Issie apps",
     "main": "dist/index.js",
@@ -9,10 +9,10 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/BeitIssieShapiro/issie-shared.git"
+        "url": "git+https://github.com/beitissieshapiro/issie-shared.git"
     },
     "bugs": {
-        "url": "https://github.com/BeitIssieShapiro/issie-shared/issues"
+        "url": "https://github.com/beitissieshapiro/issie-shared/issues"
     },
     "publishConfig": {
         "registry": "https://npm.pkg.github.com"
@@ -20,6 +20,10 @@
     "scripts": {
         "build": "tsc",
         "prepublishOnly": "npm run build"
+    },
+    "peerDependencies": {
+        "react": "*",
+        "react-native": "*"
     },
     "dependencies": {
         "@react-native-firebase/analytics": "^23.7.0",
@@ -29,8 +33,6 @@
         "@react-native-vector-icons/ionicons": "^12.3.0",
         "@react-native-vector-icons/material-design-icons": "^12.4.0",
         "@react-native-vector-icons/material-icons": "^12.4.0",
-        "react": "19.1.1",
-        "react-native": "0.82.1",
         "react-native-localize": "^3.6.1"
     },
     "devDependencies": {
