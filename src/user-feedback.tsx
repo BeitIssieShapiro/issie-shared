@@ -122,6 +122,7 @@ export function FeedbackDialog(props: FeedbackDialogProps) {
             visible={props.visible}
             transparent={true}
             animationType="fade"
+            supportedOrientations={['portrait', 'portrait-upside-down', 'landscape', 'landscape-left', 'landscape-right']}
             onRequestClose={handleClose}
         >
             <TouchableOpacity

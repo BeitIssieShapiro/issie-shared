@@ -18,18 +18,70 @@ type CurrLang = { languageTag: string, isRTL: boolean };
 
 let strings: LangMap = {
     "he": {
-        "KEY": "Value"
+        "KEY": "Value",
+        "UserFeedback": "משוב משתמש",
+        "FeedbackTitleLabel": "כותרת",
+        "FeedbackTitlePlaceholder": "הזן כותרת קצרה",
+        "TitleMinLength": "הכותרת חייבת להיות לפחות 3 תווים",
+        "TitleMaxLength": "הכותרת חייבת להיות פחות מ-100 תווים",
+        "FeedbackMinLength": "המשוב חייב להיות לפחות 5 תווים",
+        "FeedbackMaxLength": "המשוב חייב להיות פחות מ-1000 תווים",
+        "InvalidEmail": "כתובת אימייל לא תקינה",
+        "FeedbackSubmitted": "המשוב נשלח בהצלחה",
+        "FeedbackError": "שגיאה בשליחת המשוב. אנא נסה שוב.",
+        "FeedbackPlaceholder": "ספר לנו מה אתה חושב...",
+        "EmailTitle": "אימייל (אופציונלי)",
+        "EmailPlaceholder": "your@email.com",
+        "BtnCancel": "ביטול",
+        "BtnSubmitFeedback": "שלח משוב"
     },
     "ar": {
-        "KEY": "Value"
+        "KEY": "Value",
+        "UserFeedback": "ملاحظات المستخدم",
+        "FeedbackTitleLabel": "عنوان",
+        "FeedbackTitlePlaceholder": "أدخل عنوانًا موجزًا",
+        "TitleMinLength": "يجب أن يكون العنوان 3 أحرف على الأقل",
+        "TitleMaxLength": "يجب أن يكون العنوان أقل من 100 حرف",
+        "FeedbackMinLength": "يجب أن تكون الملاحظات 5 أحرف على الأقل",
+        "FeedbackMaxLength": "يجب أن تكون الملاحظات أقل من 1000 حرف",
+        "InvalidEmail": "عنوان البريد الإلكتروني غير صالح",
+        "FeedbackSubmitted": "تم إرسال الملاحظات بنجاح",
+        "FeedbackError": "خطأ في إرسال الملاحظات. حاول مرة أخرى.",
+        "FeedbackPlaceholder": "أخبرنا برأيك...",
+        "EmailTitle": "البريد الإلكتروني (اختياري)",
+        "EmailPlaceholder": "your@email.com",
+        "BtnCancel": "إلغاء",
+        "BtnSubmitFeedback": "إرسال الملاحظات"
     },
     "en": {
-        "KEY": "Value"
+        "KEY": "Value",
+        "UserFeedback": "User Feedback",
+        "FeedbackTitleLabel": "Title / Subject",
+        "FeedbackTitlePlaceholder": "Enter a brief title or subject",
+        "TitleMinLength": "Title must be at least 3 characters",
+        "TitleMaxLength": "Title must be less than 100 characters",
+        "FeedbackMinLength": "Feedback must be at least 5 characters",
+        "FeedbackMaxLength": "Feedback must be less than 1000 characters",
+        "InvalidEmail": "Invalid email address",
+        "FeedbackSubmitted": "Feedback submitted successfully",
+        "FeedbackError": "Error submitting feedback. Please try again.",
+        "FeedbackPlaceholder": "Tell us what you think...",
+        "EmailTitle": "Email (optional)",
+        "EmailPlaceholder": "your@email.com",
+        "BtnCancel": "Cancel",
+        "BtnSubmitFeedback": "Submit Feedback"
     },
 };
 
 export function initLang(langMap: LangMap, defaultLang: CurrLang) {
-    strings = langMap;
+    // Merge the provided langMap with existing strings
+    // The provided langMap wins on conflicts
+    Object.keys(langMap).forEach(lang => {
+        strings[lang] = {
+            ...strings[lang],
+            ...langMap[lang]
+        };
+    });
     gCurrentLang = defaultLang;
 }
 

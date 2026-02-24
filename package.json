@@ -1,6 +1,6 @@
 {
     "name": "@beitissieshapiro/issie-shared",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Shared logic and types for Issie apps",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
