@@ -1,4 +1,5 @@
-import { ReactNativeFirebaseAppCheckProvider, initializeAppCheck } from '@react-native-firebase/app-check';
+import { initializeAppCheck } from '@react-native-firebase/app-check';
+import { ReactNativeFirebaseAppCheckProvider } from '@react-native-firebase/app-check';
 import { getApp } from '@react-native-firebase/app';
 import { getFunctions, httpsCallable } from '@react-native-firebase/functions';
 import { logEvent, logAppOpen, getAnalytics } from '@react-native-firebase/analytics';
