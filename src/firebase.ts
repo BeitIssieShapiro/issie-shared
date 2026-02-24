@@ -1,10 +1,10 @@
 import { initializeAppCheck } from '@react-native-firebase/app-check';
-import { ReactNativeFirebaseAppCheckProvider } from '@react-native-firebase/app-check';
+import appCheck from '@react-native-firebase/app-check';
 import { getApp } from '@react-native-firebase/app';
 import { getFunctions, httpsCallable } from '@react-native-firebase/functions';
 import { logEvent, logAppOpen, getAnalytics } from '@react-native-firebase/analytics';
 
-let appCheck: any = undefined;
+let appCheckInstance: any = undefined;
 let analytics: any = undefined
 
 
@@ -14,7 +14,7 @@ export function firebaseInit(debugToken: string) {
 
     analytics = getAnalytics();
 
-    const rnfbProvider = new ReactNativeFirebaseAppCheckProvider();
+    const rnfbProvider = appCheck().newReactNativeFirebaseAppCheckProvider();
     rnfbProvider.configure({
         android: {
             provider: __DEV__ ? 'debug' : 'playIntegrity',
@@ -30,7 +30,7 @@ export function firebaseInit(debugToken: string) {
         provider: rnfbProvider,
         isTokenAutoRefreshEnabled: true,
     }).then(ac => {
-        appCheck = ac
+        appCheckInstance = ac
         console.log("Firebase init complete", debugToken)
         analyticEvent(AnalyticEvent.application_start);
     });
