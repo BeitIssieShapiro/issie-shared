@@ -1,0 +1,224 @@
+# Shared Fastfile for all Issie Android projects
+# This file provides generic deployment lanes that can be called from any project
+#
+# Usage from project:
+#   fastlane deploy_android \
+#     project_root:/path/to/project \
+#     project_name:issieboard \
+#     package_name:org.issieshapiro.issieboard \
+#     flavor:issieboard
+
+default_platform(:android)
+
+# Ruby helper methods (not lanes)
+def read_properties_file(file_path)
+  properties = {}
+  File.readlines(file_path).each do |line|
+    line = line.strip
+    next if line.empty? || line.start_with?('#')
+
+    key, value = line.split('=', 2)
+    properties[key.strip] = value.strip if key && value
+  end
+  properties
+end
+
+def write_properties_file(file_path, properties)
+  lines = []
+
+  # Read existing file to preserve comments and structure
+  if File.exist?(file_path)
+    File.readlines(file_path).each do |line|
+      stripped = line.strip
+      if stripped.empty? || stripped.start_with?('#')
+        lines << line
+      else
+        key, _ = stripped.split('=', 2)
+        if key && properties.key?(key.strip)
+          lines << "#{key.strip}=#{properties[key.strip]}\n"
+          properties.delete(key.strip)
+        else
+          lines << line
+        end
+      end
+    end
+  end
+
+  # Add any new properties
+  properties.each do |key, value|
+    lines << "#{key}=#{value}\n"
+  end
+
+  File.write(file_path, lines.join)
+end
+
+platform :android do
+
+  # Generic Android deployment lane
+  # Parameters:
+  #   project_root: Path to project root (required)
+  #   project_name: Name of the project/flavor (required, e.g., "issieboard")
+  #   package_name: Android package name (required, e.g., "org.issieshapiro.issieboard")
+  #   flavor: Build flavor (optional, defaults to project_name)
+  #   track: Play Store track (optional, defaults to "internal")
+  #   release_status: Release status (optional, defaults to "draft")
+  desc "Deploy Android app to Google Play as Draft"
+  lane :deploy_android do |options|
+    # Validate required parameters
+    project_root = options[:project_root]
+    project_name = options[:project_name]
+    package_name = options[:package_name]
+
+    unless project_root && project_name && package_name
+      UI.user_error!("Missing required parameters: project_root, project_name, or package_name")
+    end
+
+    # Optional parameters with defaults
+    flavor = options[:flavor] || project_name
+    track = options[:track] || 'internal'
+    release_status = options[:release_status] || 'draft'
+
+    UI.header("Deploying #{project_name} (#{package_name})")
+    UI.message("Project root: #{project_root}")
+    UI.message("Flavor: #{flavor}")
+    UI.message("Track: #{track}")
+    UI.message("Release status: #{release_status}")
+
+    # Check git status of PROJECT repo (not shared repo)
+    sh("cd #{project_root} && git status --porcelain", log: false).empty? || UI.user_error!("Git repository is dirty! Please commit or stash changes in #{project_root} first.")
+
+
+    # Read and increment version
+    increment_version(
+      project_root: project_root,
+      project_name: project_name
+    )
+
+    # Get version info for build
+    version_code = get_version_code(
+      project_root: project_root,
+      project_name: project_name
+    )
+    version_name = get_version_name(
+      project_root: project_root,
+      project_name: project_name
+    )
+
+    UI.message("Building version #{version_name} (#{version_code})")
+
+    # Build release bundle
+    # For projects without flavors, pass flavor as nil/empty
+    gradle_task = "bundle"
+    gradle_options = {
+      project_dir: "#{project_root}/android",
+      task: gradle_task,
+      build_type: "Release",
+      print_command: false,
+      properties: {
+        "android.injected.version.code" => version_code,
+        "android.injected.version.name" => version_name
+      }
+    }
+
+    # Only add flavor if it's different from default (indicates multi-flavor project)
+    if flavor && flavor != "default"
+      gradle_options[:flavor] = flavor
+    end
+
+    gradle(gradle_options)
+
+    # Construct AAB path (different for flavored vs non-flavored projects)
+    if flavor && flavor != "default"
+      # Flavored project: app/build/outputs/bundle/{flavor}Release/app-{flavor}-release.aab
+      aab_path = "#{project_root}/android/app/build/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab"
+    else
+      # Non-flavored project: app/build/outputs/bundle/release/app-release.aab
+      aab_path = "#{project_root}/android/app/build/outputs/bundle/release/app-release.aab"
+    end
+
+    unless File.exist?(aab_path)
+      UI.user_error!("AAB not found at: #{aab_path}")
+    end
+
+    UI.success("Built AAB: #{aab_path}")
+
+    # Upload to Play Store as DRAFT
+    upload_to_play_store(
+      track: track,
+      release_status: release_status,
+      package_name: package_name,
+      aab: aab_path,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      json_key: File.expand_path('release-admin-creds.json', __dir__)
+    )
+
+    UI.success("Uploaded to Play Store (#{track}, #{release_status})")
+
+    # Commit version bump
+    commit_version_bump(
+      project_root: project_root,
+      project_name: project_name
+    )
+
+    UI.success("✅ Deployment complete for #{project_name}!")
+  end
+
+  # Helper: Get current version code
+  private_lane :get_version_code do |options|
+    project_root = options[:project_root]
+    project_name = options[:project_name]
+    version_file = "#{project_root}/android/version.properties"
+
+    versions = read_properties_file(version_file)
+    versions["#{project_name}.versionCode"].to_i
+  end
+
+  # Helper: Get current version name
+  private_lane :get_version_name do |options|
+    project_root = options[:project_root]
+    project_name = options[:project_name]
+    version_file = "#{project_root}/android/version.properties"
+
+    versions = read_properties_file(version_file)
+    versions["#{project_name}.versionName"]
+  end
+
+  # Helper: Increment version code
+  private_lane :increment_version do |options|
+    project_root = options[:project_root]
+    project_name = options[:project_name]
+    version_file = "#{project_root}/android/version.properties"
+
+    # Read current versions
+    versions = read_properties_file(version_file)
+    version_code = versions["#{project_name}.versionCode"].to_i + 1
+    version_name = versions["#{project_name}.versionName"]
+
+    # Write incremented version
+    versions["#{project_name}.versionCode"] = version_code.to_s
+    write_properties_file(version_file, versions)
+
+    UI.success("Incremented #{project_name} to versionCode #{version_code}")
+  end
+
+  # Helper: Commit version bump
+  private_lane :commit_version_bump do |options|
+    project_root = options[:project_root]
+    project_name = options[:project_name]
+
+    # Use shell commands with explicit paths
+    sh("cd #{project_root} && git add android/version.properties")
+    sh("cd #{project_root} && git commit -m 'Bump #{project_name} version for release'")
+
+    UI.success("Committed version bump for #{project_name}")
+  end
+
+  # Error handling
+  error do |lane, exception|
+    UI.error("Error in lane #{lane}: #{exception.message}")
+  end
+
+end

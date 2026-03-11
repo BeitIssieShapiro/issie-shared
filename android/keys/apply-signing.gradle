@@ -1,0 +1,82 @@
+/**
+ * Shared signing configuration for Issie Android projects
+ *
+ * This script automatically loads the correct signing configuration
+ * from issie-shared/android/keys/signing-config.properties based on
+ * the project name.
+ *
+ * Usage in project's android/app/build.gradle:
+ *   apply from: "../../../issie-shared/android/keys/apply-signing.gradle"
+ *
+ * This must be applied AFTER the android { } block.
+ */
+
+def getProjectName() {
+    // Try to determine project name from package name or module name
+    def packageName = android.defaultConfig.applicationId
+    if (packageName) {
+        // Extract last part: org.issieshapiro.issieboard -> issieboard
+        // or com.IssieSays -> issiesays
+        def parts = packageName.split('\\.')
+        return parts[parts.length - 1].toLowerCase()
+    }
+    return project.name.toLowerCase()
+}
+
+def findKeystoreGroup(projectName, signingProps) {
+    // Find which keystore group this project belongs to
+    def foundGroup = null
+    signingProps.each { key, value ->
+        if (key.endsWith('.projects')) {
+            def projects = value.split(',').collect { it.trim().toLowerCase() }
+            if (projects.contains(projectName)) {
+                // Extract group name: issie.main.projects -> main
+                foundGroup = key.replace('issie.', '').replace('.projects', '')
+            }
+        }
+    }
+    return foundGroup
+}
+
+// Load signing configuration
+def signingConfigFile = file('../../../issie-shared/android/keys/signing-config.properties')
+
+if (!signingConfigFile.exists()) {
+    logger.error("❌ Signing config not found at ${signingConfigFile.absolutePath}")
+    logger.error("❌ Release builds will fail. See issie-shared/android/keys/README.md")
+} else {
+    def signingProps = new Properties()
+    signingProps.load(new FileInputStream(signingConfigFile))
+
+    def projectName = getProjectName()
+    def keystoreGroup = findKeystoreGroup(projectName, signingProps)
+
+    if (keystoreGroup) {
+        def storeFile = signingProps["issie.${keystoreGroup}.storeFile"]
+        def keyAlias = signingProps["issie.${keystoreGroup}.keyAlias"]
+        def storePassword = signingProps["issie.${keystoreGroup}.storePassword"]
+        def keyPassword = signingProps["issie.${keystoreGroup}.keyPassword"]
+
+        // Get the keys directory (where signing-config.properties is)
+        def keysDir = signingConfigFile.parentFile
+        def keystorePath = new File(keysDir, storeFile)
+
+        if (keystorePath.exists()) {
+            // Set the signing config properties
+            android.signingConfigs.release.storeFile = keystorePath
+            android.signingConfigs.release.keyAlias = keyAlias
+            android.signingConfigs.release.storePassword = storePassword
+            android.signingConfigs.release.keyPassword = keyPassword
+
+            logger.lifecycle("✅ Loaded signing config for '${projectName}' from keystore group '${keystoreGroup}'")
+            logger.lifecycle("   Keystore: ${keystorePath.name}")
+        } else {
+            logger.error("❌ Keystore file not found: ${keystorePath.absolutePath}")
+            throw new GradleException("Keystore file not found: ${keystorePath.absolutePath}")
+        }
+    } else {
+        logger.error("❌ No keystore group found for project '${projectName}'")
+        logger.error("❌ Add '${projectName}' to a keystore group in signing-config.properties")
+        throw new GradleException("No keystore group configured for project '${projectName}'")
+    }
+}

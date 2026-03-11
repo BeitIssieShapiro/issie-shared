@@ -1,0 +1,27 @@
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/README.md
+
+# Credentials & Keys (IMPORTANT: Never commit these!)
+fastlane/release-admin-creds.json
+fastlane/*.json
+keys/*.jks
+keys/*.keystore
+keys/signing-config.properties
+*.jks
+*.keystore
+
+# Ruby
+Gemfile.lock
+vendor/
+.bundle/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+

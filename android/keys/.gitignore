@@ -1,0 +1,9 @@
+# Keystores (never commit!)
+*.jks
+*.keystore
+
+# Signing configuration with passwords (never commit!)
+signing-config.properties
+
+# Keep the example file
+!signing-config.properties.example

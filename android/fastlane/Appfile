@@ -1,0 +1,11 @@
+# Appfile for shared Issie Android deployment
+# This file is used by fastlane for all Issie projects
+
+for_platform :android do
+  # Package name will be overridden by lane parameters
+  # Default to IssieBoard for safety
+  package_name("org.issieshapiro.issieboard")
+
+  # Path to shared Google Play service account JSON key
+  json_key_file("./fastlane/release-admin-creds.json")
+end

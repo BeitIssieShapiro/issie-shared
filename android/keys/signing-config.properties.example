@@ -1,0 +1,41 @@
+# Issie Shared Signing Configuration
+
+This file contains centralized signing configuration for all Issie projects.
+
+## Structure
+
+Each keystore group has:
+- `issie.<group>.storeFile` - Keystore filename (in this directory)
+- `issie.<group>.keyAlias` - Key alias
+- `issie.<group>.storePassword` - Store password
+- `issie.<group>.keyPassword` - Key password
+- `issie.<group>.projects` - Comma-separated list of projects using this keystore
+
+## Usage
+
+Projects reference this file in their `build.gradle` to automatically load the correct signing config.
+
+See `apply-signing.gradle` for the implementation.
+
+## Security
+
+This file contains passwords and should be:
+- ✅ In `.gitignore` (never committed)
+- ✅ Stored securely (1Password, etc.)
+- ✅ Copied to `issie-shared/android/keys/` on setup
+
+## Example
+
+```properties
+# Keystore group
+issie.main.storeFile=uploadkeystore.jks
+issie.main.keyAlias=key0
+issie.main.storePassword=issiesays
+issie.main.keyPassword=issiesays
+issie.main.projects=issieboard,issievoice,issiesays
+
+# Projects using this group
+# - IssieBoard
+# - IssieVoice
+# - IssieSays
+```
