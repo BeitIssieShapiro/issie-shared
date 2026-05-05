@@ -77,6 +77,12 @@ if [ -f "$PROJECT_ROOT/package.json" ]; then
   cd "$SHARED_ROOT"
 fi
 
+# Clean Gradle to ensure fresh JS bundle (avoids stale cached bundles)
+echo "🧹 Cleaning Gradle build cache..."
+cd "$PROJECT_ROOT/android"
+./gradlew clean
+cd "$SHARED_ROOT"
+
 echo ""
 echo "🔨 Building and deploying using shared Fastlane..."
 echo ""
