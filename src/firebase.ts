@@ -9,8 +9,6 @@ let analytics: any = undefined
 
 
 export function firebaseInit(debugToken: string) {
-    // Enable debug mode for react-native-firebase:
-    if (__DEV__) (globalThis as any).RNFBDebug = true;
 
     analytics = getAnalytics();
 

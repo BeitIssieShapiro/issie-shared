@@ -1,6 +1,6 @@
 {
     "name": "@beitissieshapiro/issie-shared",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Shared logic and types for Issie apps",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -23,12 +23,12 @@
     },
     "peerDependencies": {
         "react": "*",
-        "react-native": "*"
+        "react-native": "*",
+        "@react-native-firebase/analytics": "*",
+        "@react-native-firebase/app-check": "*",
+        "@react-native-firebase/functions": "*"
     },
     "dependencies": {
-        "@react-native-firebase/analytics": "^23.7.0",
-        "@react-native-firebase/app-check": "^23.7.0",
-        "@react-native-firebase/functions": "^23.7.0",
         "@react-native-vector-icons/ant-design": "^12.4.0",
         "@react-native-vector-icons/ionicons": "^12.3.0",
         "@react-native-vector-icons/material-design-icons": "^12.4.0",
