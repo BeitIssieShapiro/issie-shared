@@ -8,6 +8,11 @@
 
 set -e
 
+# Java setup — required for react-native-nitro-modules with AGP 8.12+
+export JAVA_HOME=/opt/homebrew/opt/openjdk@21
+export PATH="$JAVA_HOME/bin:$PATH"
+export JAVA_TOOL_OPTIONS="--enable-native-access=ALL-UNNAMED"
+
 # Parse arguments
 PROJECT_NAME=$1
 PACKAGE_NAME=$2
