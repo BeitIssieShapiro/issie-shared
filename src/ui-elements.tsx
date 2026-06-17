@@ -62,14 +62,15 @@ interface RoundedButtonProps {
     iconType?: IconType;
     isMobile?: boolean;
     forceText?: string;
+    testID?: string;
 }
 export function RoundedButton({ onPress, icon, text, textSize, iconSize,
-    size, direction, dark, isMobile, forceText, key, iconType }: RoundedButtonProps) {
+    size, direction, dark, isMobile, forceText, key, iconType, testID }: RoundedButtonProps) {
 
     if (uiSettings.showButtonTexts && !isMobile || forceText) {
-        return getRoundedButtonInt(onPress, icon, text, textSize, iconSize, size, direction, dark, key, iconType)
+        return getRoundedButtonInt(onPress, icon, text, textSize, iconSize, size, direction, dark, key, iconType, testID)
     } else {
-        return getRoundedButtonInt(onPress, icon, "", textSize, iconSize, size, direction, dark, key, iconType)
+        return getRoundedButtonInt(onPress, icon, "", textSize, iconSize, size, direction, dark, key, iconType, testID)
     }
 }
 
@@ -83,7 +84,8 @@ export function getRoundedButtonInt(
     direction?: "row" | "row-reverse",
     dark?: boolean,
     key?: string,
-    iconType?: IconType) {
+    iconType?: IconType,
+    testID?: string) {
 
     let color = dark ? "white" : AppColors.titleText;
     if (icon === 'check-green') {
@@ -100,6 +102,7 @@ export function getRoundedButtonInt(
 
     return <TouchableOpacity
         key={key}
+        testID={testID}
         activeOpacity={0.7}
         onPress={callback}
         style={{ ...size }}

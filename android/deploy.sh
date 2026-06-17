@@ -82,10 +82,18 @@ if [ -f "$PROJECT_ROOT/package.json" ]; then
   cd "$SHARED_ROOT"
 fi
 
-# Clean Gradle to ensure fresh JS bundle (avoids stale cached bundles)
-echo "🧹 Cleaning Gradle build cache..."
+# Clean project build outputs only — do NOT wipe ~/.gradle/caches here.
+# That cache is valid across builds; wiping it causes Gradle to re-register
+# transform hashes without extracting files, breaking the next build.
+# ~/.gradle/caches should only be wiped via clean-builds.sh (full reset).
+echo "🧹 Cleaning build outputs..."
 cd "$PROJECT_ROOT/android"
+rm -rf app/.cxx
+# Stop daemons — they cache transform paths in memory and go stale after
+# node_modules changes, causing NoSuchFileException on settings-plugin.jar.
+./gradlew --stop 2>/dev/null || true
 ./gradlew clean
+
 cd "$SHARED_ROOT"
 
 echo ""
