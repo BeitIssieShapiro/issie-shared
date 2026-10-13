@@ -13,6 +13,9 @@ export JAVA_HOME=/opt/homebrew/opt/openjdk@21
 export PATH="$JAVA_HOME/bin:$PATH"
 export JAVA_TOOL_OPTIONS="--enable-native-access=ALL-UNNAMED"
 
+# Homebrew Ruby — macOS system Ruby (2.6) is too old for the bundled fastlane
+export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+
 # Parse arguments
 PROJECT_NAME=$1
 PACKAGE_NAME=$2
