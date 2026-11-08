@@ -1,6 +1,6 @@
 {
     "name": "@beitissieshapiro/issie-shared",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "Shared logic and types for Issie apps",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -26,16 +26,20 @@
         "react-native": "*",
         "@react-native-firebase/analytics": "*",
         "@react-native-firebase/app-check": "*",
-        "@react-native-firebase/functions": "*"
+        "@react-native-firebase/functions": "*",
+        "@react-native-vector-icons/ant-design": ">=12",
+        "@react-native-vector-icons/ionicons": ">=12",
+        "@react-native-vector-icons/material-design-icons": ">=12",
+        "@react-native-vector-icons/material-icons": ">=12"
     },
     "dependencies": {
-        "@react-native-vector-icons/ant-design": "^12.4.0",
-        "@react-native-vector-icons/ionicons": "^12.3.0",
-        "@react-native-vector-icons/material-design-icons": "^12.4.0",
-        "@react-native-vector-icons/material-icons": "^12.4.0",
         "react-native-localize": "^3.6.1"
     },
     "devDependencies": {
+        "@react-native-vector-icons/ant-design": "^14.0.0",
+        "@react-native-vector-icons/ionicons": "^14.0.0",
+        "@react-native-vector-icons/material-design-icons": "^14.0.0",
+        "@react-native-vector-icons/material-icons": "^14.0.0",
         "@types/react": "^19.2.7",
         "typescript": "^5.8.3"
     }
