@@ -6,3 +6,4 @@ export * from './ui-elements';
 export * from './device';
 export * from './log';
 export * from './lang';export * from './package-manifest';
+export * from './issie-alert';
