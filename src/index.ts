@@ -5,4 +5,4 @@ export * from './user-feedback';
 export * from './ui-elements';
 export * from './device';
 export * from './log';
-export * from './lang';
+export * from './lang';export * from './package-manifest';
