@@ -68,9 +68,53 @@ export interface PackageManifest {
  */
 export interface PackageFs {
     stat(path: string): Promise<{ size: number | string }>;
-    read(path: string, length: number, position: number, encoding: 'base64'): Promise<string>;
-    write(path: string, contents: string, position: number, encoding: 'base64'): Promise<void>;
+    readFile(path: string, encoding: 'base64'): Promise<string>;
+    writeFile(path: string, contents: string, encoding: 'base64'): Promise<void>;
     appendFile(path: string, contents: string, encoding: 'base64'): Promise<void>;
+    read?(path: string, length: number, position: number, encoding: 'base64'): Promise<string>;
+    write?(path: string, contents: string, position: number, encoding: 'base64'): Promise<void>;
+}
+
+// react-native-fs 2.x read()/write() with a position fail under the new architecture
+// ("NSInteger is unsupported"), so fall back to whole-file calls once they do
+const noPositionalAccess = new WeakSet<PackageFs>();
+
+/** `length` bytes from `position` */
+async function readRange(fs: PackageFs, path: string, length: number, position: number): Promise<Uint8Array> {
+    if (fs.read && !noPositionalAccess.has(fs)) {
+        try {
+            return toBytes(await fs.read(path, length, position, 'base64'));
+        } catch {
+            noPositionalAccess.add(fs);
+        }
+    }
+    // decode only the base64 groups (3 bytes each) that cover the range
+    const b64 = await fs.readFile(path, 'base64');
+    const first = Math.floor(position / 3);
+    const bytes = toBytes(b64.substring(first * 4, Math.ceil((position + length) / 3) * 4));
+    return bytes.subarray(position - first * 3, position - first * 3 + length);
+}
+
+/** Writes `bytes` over the file from `position` to its end, then appends `append` */
+async function replaceTail(fs: PackageFs, path: string, position: number, bytes: Uint8Array, append: Uint8Array) {
+    if (fs.write && !noPositionalAccess.has(fs)) {
+        try {
+            await fs.write(path, toBase64(bytes), position, 'base64');
+            await fs.appendFile(path, toBase64(append), 'base64');
+            return;
+        } catch {
+            noPositionalAccess.add(fs);
+        }
+    }
+    // keep the untouched base64 groups as they are, re-encode only from the group holding `position`
+    const b64 = await fs.readFile(path, 'base64');
+    const first = Math.floor(position / 3);
+    const groupStart = toBytes(b64.substring(first * 4)).subarray(0, position - first * 3);
+    const tail = new Uint8Array(groupStart.length + bytes.length + append.length);
+    tail.set(groupStart);
+    tail.set(bytes, groupStart.length);
+    tail.set(append, groupStart.length + bytes.length);
+    await fs.writeFile(path, b64.substring(0, first * 4) + toBase64(tail), 'base64');
 }
 
 const COMMENT_PREFIX = 'issie-package:';
@@ -125,7 +169,7 @@ async function readZipEnd(fs: PackageFs, zipPath: string): Promise<ZipEnd | unde
     if (size < EOCD_SIZE) return undefined;
     const tailLength = Math.min(size, EOCD_SIZE + MAX_COMMENT);
     const tailStart = size - tailLength;
-    const tail = toBytes(await fs.read(zipPath, tailLength, tailStart, 'base64'));
+    const tail = await readRange(fs, zipPath, tailLength, tailStart);
 
     for (let i = tail.length - EOCD_SIZE; i >= 0; i--) {
         if (u32(tail, i) !== EOCD_SIGNATURE) continue;
@@ -157,8 +201,8 @@ export async function stampPackage(fs: PackageFs, zipPath: string, manifest: Omi
     const comment = asciiToBytes(text);
     if (comment.length > MAX_COMMENT) throw new Error('Manifest too long');
 
-    await fs.write(zipPath, toBase64(new Uint8Array([comment.length & 0xff, comment.length >> 8])), end.eocdOffset + 20, 'base64');
-    await fs.appendFile(zipPath, toBase64(comment), 'base64');
+    // the comment length is the last field of the record, i.e. the file's last 2 bytes
+    await replaceTail(fs, zipPath, end.eocdOffset + 20, new Uint8Array([comment.length & 0xff, comment.length >> 8]), comment);
 }
 
 /** The manifest stamped by stampPackage(), or undefined for older packages and other zips. */
@@ -180,7 +224,7 @@ export async function readPackageManifest(fs: PackageFs, zipPath: string): Promi
 export async function listPackageEntries(fs: PackageFs, zipPath: string): Promise<string[]> {
     const end = await readZipEnd(fs, zipPath);
     if (!end || end.centralDirSize === 0 || end.centralDirOffset === 0xffffffff) return []; // empty or zip64
-    const dir = toBytes(await fs.read(zipPath, end.centralDirSize, end.centralDirOffset, 'base64'));
+    const dir = await readRange(fs, zipPath, end.centralDirSize, end.centralDirOffset);
 
     const names: string[] = [];
     let i = 0;
@@ -278,7 +322,8 @@ export type PackageCheck =
     | { ok: false; reason: 'newer-format'; manifest: PackageManifest };
 
 /**
- * Whether `currentApp` should import the package. An unidentified package is allowed,
+ * Whether `currentApp` should import the package. An unidentified package is allowed
+ * (as is one that cannot be read),
  * so the app's own legacy import (and its errors) still run.
  * `acceptedApps` lets an app also accept packages of related apps (e.g. the IssieBoard family).
  */
@@ -288,7 +333,14 @@ export async function checkPackage(
     currentApp: IssieAppId,
     options: { acceptedApps?: IssieAppId[]; readEntry?: (name: string) => Promise<string | undefined> } = {},
 ): Promise<PackageCheck> {
-    const identity = await identifyPackage(fs, zipPath, options.readEntry);
+    let identity: PackageIdentity | undefined;
+    try {
+        identity = await identifyPackage(fs, zipPath, options.readEntry);
+    } catch (e) {
+        // never block an import because the package could not be inspected
+        console.log('checkPackage: cannot inspect package', zipPath, e);
+        return { ok: true };
+    }
     if (!identity) return { ok: true };
 
     const accepted = [currentApp, ...(options.acceptedApps ?? [])];
