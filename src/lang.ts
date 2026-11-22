@@ -33,7 +33,15 @@ let strings: LangMap = {
         "EmailTitle": "אימייל (אופציונלי)",
         "EmailPlaceholder": "your@email.com",
         "BtnCancel": "ביטול",
-        "BtnSubmitFeedback": "שלח משוב"
+        "BtnSubmitFeedback": "שלח משוב",
+        "PkgOtherAppTitle": "הקובץ שייך לאפליקציה אחרת",
+        "PkgOtherAppMsg": "קובץ זה נוצר באפליקציה {1} ולא ניתן לפתוח אותו כאן.",
+        "PkgUnknownAppMsg": "קובץ זה נוצר באפליקציה אחרת ולא ניתן לפתוח אותו כאן.",
+        "PkgOpenIn": "פתח ב-{1}",
+        "PkgGetApp": "הורד את {1}",
+        "PkgNewerTitle": "נדרש עדכון",
+        "PkgNewerMsg": "קובץ זה נוצר בגרסה חדשה יותר של האפליקציה. יש לעדכן כדי לפתוח אותו.",
+        "PkgUpdate": "עדכן"
     },
     "ar": {
         "KEY": "Value",
@@ -51,7 +59,15 @@ let strings: LangMap = {
         "EmailTitle": "البريد الإلكتروني (اختياري)",
         "EmailPlaceholder": "your@email.com",
         "BtnCancel": "إلغاء",
-        "BtnSubmitFeedback": "إرسال الملاحظات"
+        "BtnSubmitFeedback": "إرسال الملاحظات",
+        "PkgOtherAppTitle": "الملف ينتمي إلى تطبيق آخر",
+        "PkgOtherAppMsg": "تم إنشاء هذا الملف في تطبيق {1} ولا يمكن فتحه هنا.",
+        "PkgUnknownAppMsg": "تم إنشاء هذا الملف في تطبيق آخر ولا يمكن فتحه هنا.",
+        "PkgOpenIn": "فتح في {1}",
+        "PkgGetApp": "تنزيل {1}",
+        "PkgNewerTitle": "مطلوب تحديث",
+        "PkgNewerMsg": "تم إنشاء هذا الملف بإصدار أحدث من التطبيق. يرجى التحديث لفتحه.",
+        "PkgUpdate": "تحديث"
     },
     "en": {
         "KEY": "Value",
@@ -69,7 +85,15 @@ let strings: LangMap = {
         "EmailTitle": "Email (optional)",
         "EmailPlaceholder": "your@email.com",
         "BtnCancel": "Cancel",
-        "BtnSubmitFeedback": "Submit Feedback"
+        "BtnSubmitFeedback": "Submit Feedback",
+        "PkgOtherAppTitle": "This file belongs to another app",
+        "PkgOtherAppMsg": "This file was made in {1} and can't be opened here.",
+        "PkgUnknownAppMsg": "This file was made in another app and can't be opened here.",
+        "PkgOpenIn": "Open in {1}",
+        "PkgGetApp": "Get {1}",
+        "PkgNewerTitle": "Update needed",
+        "PkgNewerMsg": "This file was made with a newer version of the app. Update to open it.",
+        "PkgUpdate": "Update"
     },
 };
 
