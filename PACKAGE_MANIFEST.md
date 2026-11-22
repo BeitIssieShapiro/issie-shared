@@ -22,6 +22,7 @@ Tested: a stamped zip still passes `unzip -t` and opens with Python's zipfile; e
 ## API
 
 All file access goes through the app's own fs module (`react-native-fs` or `@dr.pogodin/react-native-fs`), passed as the first argument.
+It uses `read`/`write` at a position when they work. In react-native-fs 2.x they fail under the new architecture, so the module falls back to `readFile`/`writeFile` of the whole file, which is native and fast.
 
 - `stampPackage(fs, zipPath, { app, kind, appVersion })`: call right after `zip()`, before sharing.
 - `checkPackage(fs, zipPath, currentApp, { acceptedApps?, readEntry? })`: call before importing.
