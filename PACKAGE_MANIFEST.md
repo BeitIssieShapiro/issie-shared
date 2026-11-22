@@ -64,6 +64,7 @@ if (!check.ok) {
 ```
 
 - The IssieBoard family passes `acceptedApps: ['issieboard', 'issievoice', 'issiecalc']` if they share profiles.
+- Mount `<IssieAlertHost/>` once at the app root. The message then follows the app's text direction; the system alert aligns by the device language, so a Hebrew app on an English device shows it left-aligned. Without the host it falls back to `Alert.alert`.
 - On Android, pass a local file path: copy a `content://` URI to a temp file first, as IssieAlbum does.
 - Stamping the outer zip is enough. Inner zips of a backup can be stamped too, but don't need to be.
 

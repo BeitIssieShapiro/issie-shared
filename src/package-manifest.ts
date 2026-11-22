@@ -11,7 +11,8 @@
  * Packages made before this have no comment; identifyPackage() then falls back to
  * each app's known file layout.
  */
-import { Alert, Linking, Platform } from 'react-native';
+import { Linking, Platform } from 'react-native';
+import { issieAlert } from './issie-alert';
 import { fTranslate, translate } from './lang';
 
 export type IssieAppId =
@@ -354,7 +355,8 @@ export async function checkPackage(
 }
 
 /**
- * Tells the user why a package was not imported. For another app's file it offers to open
+ * Tells the user why a package was not imported (with issieAlert: mount <IssieAlertHost/>
+ * for the app's text direction). For another app's file it offers to open
  * it there (`share` opens the share sheet with the file, e.g. react-native-share's Share.open)
  * and to get that app from the store.
  */
@@ -365,7 +367,7 @@ export function showPackageCheckAlert(
     share: (zipPath: string) => Promise<unknown>,
 ) {
     if (check.reason === 'newer-format') {
-        Alert.alert(translate('PkgNewerTitle'), translate('PkgNewerMsg'), [
+        issieAlert(translate('PkgNewerTitle'), translate('PkgNewerMsg'), [
             { text: translate('BtnCancel'), style: 'cancel' },
             { text: translate('PkgUpdate'), onPress: () => Linking.openURL(storeUrl(currentApp)) },
         ]);
@@ -374,11 +376,11 @@ export function showPackageCheckAlert(
 
     const app = check.app ?? (check.candidates.length === 1 ? check.candidates[0] : undefined);
     if (!app) {
-        Alert.alert(translate('PkgOtherAppTitle'), translate('PkgUnknownAppMsg'));
+        issieAlert(translate('PkgOtherAppTitle'), translate('PkgUnknownAppMsg'));
         return;
     }
     const name = ISSIE_APPS[app].name;
-    Alert.alert(translate('PkgOtherAppTitle'), fTranslate('PkgOtherAppMsg', name), [
+    issieAlert(translate('PkgOtherAppTitle'), fTranslate('PkgOtherAppMsg', name), [
         { text: translate('BtnCancel'), style: 'cancel' },
         { text: fTranslate('PkgGetApp', name), onPress: () => Linking.openURL(storeUrl(app)) },
         { text: fTranslate('PkgOpenIn', name), onPress: () => share(zipPath).catch(() => { }) },
