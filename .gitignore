@@ -2,3 +2,5 @@ node_modules
 dist
 package-lock.json
 
+# App Store Connect API private keys
+AuthKey_*.p8
