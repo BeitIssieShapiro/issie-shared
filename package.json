@@ -1,52 +1,55 @@
 {
-    "name": "@beitissieshapiro/issie-shared",
-    "version": "1.0.10",
-    "description": "Shared logic and types for Issie apps",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "files": [
-        "dist"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/beitissieshapiro/issie-shared.git"
-    },
-    "bugs": {
-        "url": "https://github.com/beitissieshapiro/issie-shared/issues"
-    },
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com"
-    },
-    "scripts": {
-        "build": "tsc",
-        "prepublishOnly": "npm run build"
-    },
-    "peerDependencies": {
-        "react": "*",
-        "react-native": "*",
-        "react-native-localize": ">=3.5.0",
-        "@react-native-firebase/app": "*",
-        "@react-native-firebase/analytics": "*",
-        "@react-native-firebase/app-check": "*",
-        "@react-native-firebase/functions": "*",
-        "@react-native-vector-icons/ant-design": ">=12",
-        "@react-native-vector-icons/ionicons": ">=12",
-        "@react-native-vector-icons/material-design-icons": ">=12",
-        "@react-native-vector-icons/material-icons": ">=12"
-    },
-    "devDependencies": {
-        "@react-native-firebase/analytics": "^23.8.8",
-        "@react-native-firebase/app": "^23.8.8",
-        "@react-native-firebase/app-check": "^23.8.8",
-        "@react-native-firebase/functions": "^23.8.8",
-        "@react-native-vector-icons/ant-design": "^14.0.0",
-        "@react-native-vector-icons/ionicons": "^14.0.0",
-        "@react-native-vector-icons/material-design-icons": "^14.0.0",
-        "@react-native-vector-icons/material-icons": "^14.0.0",
-        "@types/react": "^19.2.7",
-        "react": "19.3.0",
-        "react-native": "0.88.1",
-        "react-native-localize": "^3.8.0",
-        "typescript": "^5.8.3"
-    }
+  "name": "@beitissieshapiro/issie-shared",
+  "version": "1.0.10",
+  "description": "Shared logic and types for Issie apps",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beitissieshapiro/issie-shared.git"
+  },
+  "bugs": {
+    "url": "https://github.com/beitissieshapiro/issie-shared/issues"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-localize": ">=3.5.0",
+    "@react-native-firebase/app": "*",
+    "@react-native-firebase/analytics": "*",
+    "@react-native-firebase/app-check": "*",
+    "@react-native-firebase/functions": "*",
+    "@react-native-vector-icons/ant-design": ">=12",
+    "@react-native-vector-icons/ionicons": ">=12",
+    "@react-native-vector-icons/material-design-icons": ">=12",
+    "@react-native-vector-icons/material-icons": ">=12"
+  },
+  "devDependencies": {
+    "@react-native-firebase/analytics": "^23.8.8",
+    "@react-native-firebase/app": "^23.8.8",
+    "@react-native-firebase/app-check": "^23.8.8",
+    "@react-native-firebase/functions": "^23.8.8",
+    "@react-native-vector-icons/ant-design": "^14.0.0",
+    "@react-native-vector-icons/ionicons": "^14.0.0",
+    "@react-native-vector-icons/material-design-icons": "^14.0.0",
+    "@react-native-vector-icons/material-icons": "^14.0.0",
+    "@types/react": "^19.2.7",
+    "react": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-localize": "^3.8.0",
+    "typescript": "^5.8.3"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.14.3"
+  }
 }
