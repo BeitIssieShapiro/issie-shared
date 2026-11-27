@@ -8,8 +8,15 @@
     "rootDir": "./src",
     "strict": true,
     "moduleResolution": "node",
+    /* RN >= 0.87 dropped the top-level "types" field and exposes its types only via "exports", which node10
+       resolution ignores; point it at the generated types explicitly. */
+    "paths": {
+      "react-native": ["./node_modules/react-native/types_generated/index.d.ts"]
+    },
     "esModuleInterop": true,
     "skipLibCheck": true,
+    /* Don't pick up stray global @types from parent folders. */
+    "types": [],
     
     /* JSX Support */
     "jsx": "react-jsx", 
